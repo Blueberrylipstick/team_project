@@ -52,3 +52,35 @@ def repeat(value):
     """
     while True:
         yield value
+
+
+def product2(*args, **kwds):
+    '''
+    :param int args: Set or sets, which should be turned into cartesian product
+    :param dict kwds: Number od repetotions
+    :returns:  cartesian product of sets
+    :rtype: list(tuple)
+    >>> list(product(range(2), repeat=3))
+    [(0, 0, 0), (0, 0, 1), (0, 1, 0), (0, 1, 1), (1, 0, 0), (1, 0, 1), (1, 1, 0), (1, 1, 1)]
+    >>> list(product('ABCD', 'xy'))
+    [('A', 'x'), ('A', 'y'), ('B', 'x'), ('B', 'y'), ('C', 'x'), ('C', 'y'), ('D', 'x'), ('D', 'y')]
+    '''
+    def recursive(arg_list: list):
+        '''
+        :param list arg_list: List of sets to turn into cartesian product
+        :returns: generated object
+        :rtype:generator
+        '''
+        if not arg_list:
+            yield()
+        else:
+            for elem in arg_list[0]:
+                for prod in  recursive(arg_list[1:]):
+                    yield (elem,)+prod
+    try:
+        pools = list(map(list, args)) * kwds['repeat']
+    except KeyError:
+        pools = list(map(list, args))
+    result = list(recursive(pools))
+
+    return result
